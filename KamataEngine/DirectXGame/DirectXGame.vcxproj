@@ -178,7 +178,43 @@ xcopy "$(ProjectDir)..\External\KamataEngine\shaders" "$(ProjectDir)Resources\En
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AABBClass.cpp" />
+    <ClCompile Include="Calculation.cpp" />
+    <ClCompile Include="CameraController.cpp" />
+    <ClCompile Include="DeathParticles.cpp" />
+    <ClCompile Include="Easing.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Fade.cpp" />
+    <ClCompile Include="GameManager.cpp" />
+    <ClCompile Include="GameScene.cpp" />
+    <ClCompile Include="GuardEffect.cpp" />
+    <ClCompile Include="HitEffect.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MapChipField.cpp" />
+    <ClCompile Include="MathFunction.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="SelectScene.cpp" />
+    <ClCompile Include="Skydome.cpp" />
+    <ClCompile Include="StageManager.cpp" />
+    <ClCompile Include="TitleScene.cpp" />
+    <ClCompile Include="WorldTransformUpDate.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AABBClass.h" />
+    <ClInclude Include="Calculation.h" />
+    <ClInclude Include="CameraController.h" />
+    <ClInclude Include="DeathParticles.h" />
+    <ClInclude Include="Easing.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="Fade.h" />
+    <ClInclude Include="GameManager.h" />
+    <ClInclude Include="GameScene.h" />
+    <ClInclude Include="HitEffect.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="SelectScene.h" />
+    <ClInclude Include="Skydome.h" />
+    <ClInclude Include="StageManager.h" />
+    <ClInclude Include="TitleScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
