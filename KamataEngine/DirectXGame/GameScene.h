@@ -8,6 +8,7 @@
 #include "KamataEngine.h"
 #include "MapChipField.h"
 #include "Player.h"
+#include "ShieldEnemy.h"
 #include "Skydome.h"
 #include <vector>
 
@@ -35,6 +36,9 @@ private:
 	KamataEngine::Model* hitEffectModel_ = nullptr;
 
 	KamataEngine::Model* guardEffectModel_ = nullptr;
+
+	KamataEngine::Model* clearTextModel_ = nullptr;
+	KamataEngine::WorldTransform clearTextWorldTransform_;
 
 	// カメラ
 	KamataEngine::Camera camera_;

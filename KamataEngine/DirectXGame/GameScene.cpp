@@ -2,13 +2,13 @@
 #include "2d/ImGuiManager.h"
 #include "AABBClass.h"
 #include "Calculation.h"
-#include "WorldTransformUpDate.h"
 #include "StageManager.h"
+#include "WorldTransformUpDate.h"
 
 using namespace KamataEngine;
 
 void GameScene::Initialize(StageManager* stageDataManager) {
-	//引数をメンバ変数に記録する
+	// 引数をメンバ変数に記録する
 	stageManager_ = stageDataManager;
 
 	// 3Dモデルの生成
@@ -32,6 +32,8 @@ void GameScene::Initialize(StageManager* stageDataManager) {
 	GuardEffect::SetModel(guardEffectModel_);
 	GuardEffect::SetCamera(&camera_);
 
+	clearTextModel_ = Model::CreateFromOBJ("Cleartext", true);
+
 	// カメラの初期化
 	camera_.farZ = 1080.0f;
 	camera_.Initialize();
@@ -39,13 +41,13 @@ void GameScene::Initialize(StageManager* stageDataManager) {
 	// マップチップフィールドの生成
 	mapChipField_ = new MapChipField;
 
-	//現在のステージデータを取得する
+	// 現在のステージデータを取得する
 	const StageData& stageData = stageManager_->GetCurrentStageData();
 
-	//ステージファイルパスの生成
+	// ステージファイルパスの生成
 	std::string stageFileName = "Resources/fields/" + stageData.name + ".csv ";
 
-	//ステージファイルの読み込み
+	// ステージファイルの読み込み
 	mapChipField_->LoadMapChipCsv(stageFileName);
 
 	GenerateFieldObjects();
@@ -144,6 +146,15 @@ void GameScene::Update() {
 		break;
 	case Phase::kPlay:
 
+		if (enemies_.empty() && shieldenemies_.empty()) {
+			clearTextWorldTransform_.Initialize();
+			clearTextWorldTransform_.translation_ = player_->GetWorldTransform().translation_;
+			clearTextWorldTransform_.translation_.y = 7;
+			WorldTransformUpdate(clearTextWorldTransform_);
+			fade_->Start(Fade::Status::FadeOut, 3);
+			phase_ = Phase::kFadeOut;
+		}
+
 		// 天球の更新
 		skydome_->Update();
 
@@ -153,6 +164,10 @@ void GameScene::Update() {
 		// エネミーの更新
 		for (Enemy* enemy : enemies_) {
 			enemy->Update();
+		}
+
+		for (ShieldEnemy* shieldEnemy : shieldenemies_) {
+			shieldEnemy->Update();
 		}
 
 		// エフェクトの更新
@@ -210,6 +225,10 @@ void GameScene::Update() {
 			enemy->Update();
 		}
 
+		for (ShieldEnemy* shieldEnemy : shieldenemies_) {
+			shieldEnemy->Update();
+		}
+
 		// エフェクトの更新
 		for (HitEffect* hitEffect : hitEffects_) {
 			hitEffect->Update();
@@ -253,6 +272,10 @@ void GameScene::Update() {
 			enemy->Update();
 		}
 
+		for (ShieldEnemy* shieldEnemy : shieldenemies_) {
+			shieldEnemy->Update();
+		}
+
 		break;
 	}
 
@@ -260,6 +283,14 @@ void GameScene::Update() {
 	enemies_.remove_if([](Enemy* enemy) {
 		if (enemy->IsDead()) {
 			delete enemy;
+			return true;
+		}
+		return false;
+	});
+
+	shieldenemies_.remove_if([](ShieldEnemy* shieldEnemy) {
+		if (shieldEnemy->IsDead()) {
+			delete shieldEnemy;
 			return true;
 		}
 		return false;
@@ -303,12 +334,21 @@ void GameScene::Draw() {
 		}
 		break;
 	case Phase::kFadeOut:
+		if (!player_->IsDead()) {
+			clearTextModel_->Draw(clearTextWorldTransform_, camera_);
+			player_->Draw();
+		}
+
 		break;
 	}
 
 	// エネミーの描画
 	for (Enemy* enemy : enemies_) {
 		enemy->Draw();
+	}
+
+	for (ShieldEnemy* shieldEnemy : shieldenemies_) {
+		shieldEnemy->Draw();
 	}
 
 	// ヒットエフェクトの描画
@@ -391,6 +431,8 @@ void GameScene::GenerateFieldObjects() {
 void GameScene::GenerateEnemyObjects(const uint8_t& subID, int j, int i) {
 	// 歩く敵の生成
 	Enemy* newEnemy = new Enemy();
+	// 盾持ちの敵の生成
+	ShieldEnemy* newShieldEnemy = new ShieldEnemy();
 
 	switch (subID) {
 	case 0:
@@ -400,9 +442,11 @@ void GameScene::GenerateEnemyObjects(const uint8_t& subID, int j, int i) {
 		enemies_.push_back(newEnemy);
 		break;
 	case 1:
-		newEnemy->Initialize(shieldenemyModel_, &camera_, mapChipField_->GetMapChipPositionByIndex(j, i));
-		newEnemy->SetGameScene(this);
-		enemies_.push_back(newEnemy);
+		// 初期化
+		newShieldEnemy->Initialize(shieldenemyModel_, &camera_, mapChipField_->GetMapChipPositionByIndex(j, i));
+		newShieldEnemy->SetGameScene(this);
+		shieldenemies_.push_back(newShieldEnemy);
+
 		break;
 	default:
 		break;
@@ -437,6 +481,23 @@ void GameScene::CheckAllCollisions() {
 		}
 	}
 
+	for (ShieldEnemy* shieldEnemy : shieldenemies_) {
+		if (shieldEnemy->IsCollisionDisabled()) {
+			continue;
+		}
+
+		// 敵の座標
+		aabb2 = shieldEnemy->GetAABB();
+
+		// AABB同士の交差判定
+		if (AABBClass::IsCollision(aabb1, aabb2)) {
+			// 衝突応答
+			// 自キャラの衝突時コールバックを呼び出す
+			player_->OnCollision(shieldEnemy);
+			// 敵の衝突時コールバックを呼び出す
+			shieldEnemy->OnCollision(player_);
+		}
+	}
 #pragma endregion
 }
 
@@ -498,6 +559,11 @@ GameScene::~GameScene() {
 	}
 	enemies_.clear();
 
+	for (ShieldEnemy* shieldEnemy : shieldenemies_) {
+		delete shieldEnemy;
+	}
+	shieldenemies_.clear();
+
 	// エフェクトの開放
 	for (HitEffect* hitEffect : hitEffects_) {
 		delete hitEffect;
@@ -526,4 +592,6 @@ GameScene::~GameScene() {
 	// エフェクト用モデルの開放
 	delete hitEffectModel_;
 	delete guardEffectModel_;
+
+	delete clearTextModel_;
 }
