@@ -20,7 +20,6 @@ void Player::Initialize(Model* model, Camera* camera, const Vector3& position) {
 	// ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
-	worldTransform_.rotation_.x = std::numbers::pi_v<float> / -2.0f;
 	WorldTransformUpdate(worldTransform_);
 }
 

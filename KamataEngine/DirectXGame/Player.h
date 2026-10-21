@@ -13,33 +13,33 @@ enum class LRDirection {
 	kLeft,
 };
 
+// マップとの当たり判定情報(天井衝突フラグ/着地フラグ/壁接触フラグ/移動量)
+struct CollisionMapInfo {
+	bool ceilingHit = false;
+	bool landing = false;
+	bool wallTouch = false;
+	KamataEngine::Vector3 movement;
+};
+
+// 角
+enum Corner {
+	kRightBottom,
+	kLeftBottom,
+	kRightTop,
+	kLeftTop,
+
+	kNumCorner // 要素数
+};
+
 /// <summary>
 /// 自キャラ
 /// </summary>
 class Player {
 private:
-	// 角
-	enum Corner {
-		kRightBottom,
-		kLeftBottom,
-		kRightTop,
-		kLeftTop,
-
-		kNumCorner // 要素数
-	};
-
-	// マップとの当たり判定情報(天井衝突フラグ/着地フラグ/壁接触フラグ/移動量)
-	struct CollisionMapInfo {
-		bool ceilingHit = false;
-		bool landing = false;
-		bool wallTouch = false;
-		KamataEngine::Vector3 movement;
-	};
-
 	// 左右の自キャラの角度テーブル
 	static inline const float destinationRotationYTable[] = {
-	    std::numbers::pi_v<float> * 4.0f / 2.0f,
 	    std::numbers::pi_v<float> / 1.0f,
+	    std::numbers::pi_v<float> * 4.0f / 2.0f,
 	};
 
 	// 振る舞い

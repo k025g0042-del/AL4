@@ -12,7 +12,7 @@ void GameScene::Initialize(StageManager* stageDataManager) {
 	stageManager_ = stageDataManager;
 
 	// 3Dモデルの生成
-	model_ = Model::CreateFromOBJ("player1", true);
+	model_ = Model::CreateFromOBJ("playerOnrush", true);
 
 	enemyModel_ = Model::CreateFromOBJ("enemy", true);
 
@@ -84,7 +84,7 @@ void GameScene::Initialize(StageManager* stageDataManager) {
 	// リセット(瞬間合わせ)
 	cameraFollow_->Reset();
 
-	cameraFollow_->SetMovableArea({12, 88, 6, 20});
+	cameraFollow_->SetMovableArea({11, 19, 6, 20});
 	// ビュープロジェクション行列の転送
 	camera_.TransferMatrix();
 

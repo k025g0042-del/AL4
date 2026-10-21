@@ -68,7 +68,7 @@ private:
 
 	GameScene* gameScene_ = nullptr;
 
-	// 左右の自キャラの角度テーブル
+	// 左右の角度テーブル
 	static inline const float destinationRotationYTable[] = {
 	    std::numbers::pi_v<float> / -2.0f,
 	    std::numbers::pi_v<float> / 2.0f,
