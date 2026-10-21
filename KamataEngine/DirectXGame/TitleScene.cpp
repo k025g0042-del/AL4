@@ -4,7 +4,7 @@
 using namespace KamataEngine;
 
 void TitleScene::Initialize() {
-	title_ = Model::CreateFromOBJ("title", true);
+	title_ = Model::CreateFromOBJ("titleAttak", true);
 	space_ = Model::CreateFromOBJ("space", true);
 	modelSkydome_ = Model::CreateFromOBJ("celestialSphere", true);
 
@@ -19,9 +19,9 @@ void TitleScene::Initialize() {
 	camera_.Initialize();
 	// ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
-	worldTransform_.translation_ = {-5, 0, 0};
-	worldTransform_.rotation_ = {-1.62f, 0, 0};
-	worldTransform_.scale_ = {0.5f, 0.5f, 0.5f};
+	worldTransform_.translation_ = {-18, 0, 0};
+	worldTransform_.rotation_ = {0, 0, 0};
+	worldTransform_.scale_ = {1.5f, 1.5f, 1.5f};
 	WorldTransformUpdate(worldTransform_);
 
 	worldTransformSpace_.Initialize();
