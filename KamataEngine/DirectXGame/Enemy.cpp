@@ -4,11 +4,10 @@
 #include <numbers>
 #define _USE_MATH_DEFINES
 #include "Easing.h"
+#include "GameScene.h"
 #include "MathFunction.h"
 #include "Player.h"
 #include <math.h>
-#include"GameScene.h"
-
 
 using namespace KamataEngine;
 
@@ -74,6 +73,16 @@ void Enemy::Update() {
 		break;
 	}
 
+	if (worldTransform_.translation_.x <= 1.0f) {
+		velocity_.x *= -1;
+		worldTransform_.rotation_.y = std::numbers::pi_v<float> * 4.0f / 2.0f;
+		worldTransform_.rotation_.x = std::numbers::pi_v<float> / -2.0f;
+	} else if (worldTransform_.translation_.x >= 29.0f) {
+		velocity_.x *= -1;
+		worldTransform_.rotation_.y = std::numbers::pi_v<float> / 1.0f;
+		worldTransform_.rotation_.x = std::numbers::pi_v<float> / -2.0f;
+	}
+
 	// 行列の更新
 	WorldTransformUpdate(worldTransform_);
 }
@@ -117,7 +126,7 @@ void Enemy::OnCollision(Player* player) {
 		// 敵の振る舞いをデス演出に変更
 		behaviorRequest_ = Behavior::kDeath;
 
-		//敵と自キャラの中間位置にエフェクトを生成
+		// 敵と自キャラの中間位置にエフェクトを生成
 		Vector3 effectPos;
 		effectPos.x = (worldTransform_.translation_.x + player->GetWorldTransformX()) / 2.0f;
 		effectPos.y = (worldTransform_.translation_.y + player->GetWorldTransformY()) / 2.0f;
