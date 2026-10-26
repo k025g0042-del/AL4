@@ -8,7 +8,7 @@ using namespace KamataEngine;
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	
 	// エンジンの初期化
-	KamataEngine::Initialize(L"LC2B_18_ニシカワ_ナナミ");
+	KamataEngine::Initialize(L"LE2B_18_ニシカワ_ナナミ_殲滅タックル");
 
 	// DirectXCommonインスタンスの取得
 	DirectXCommon* dxCommmon = DirectXCommon::GetInstance();
